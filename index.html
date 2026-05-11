@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Baccarat Dashboard</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:linear-gradient(180deg,#2b0140,#160020);
+color:white;
+}
+
+.container{
+  width:1200px;
+  margin:auto;
+  padding:20px;
+  display:none;
+}
+
+.card{
+background:linear-gradient(180deg,#4b1b68,#2a0d3d);
+border-radius:15px;
+padding:20px;
+margin-bottom:20px;
+box-shadow:0 0 20px rgba(255,0,200,.2);
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:15px;
+}
+
+.title{
+font-size:26px;
+font-weight:bold;
+}
+
+/* ROADMAP */
+
+.roadmap{
+display:grid;
+grid-template-columns:repeat(14,40px);
+gap:6px;
+justify-content:center;
+padding:20px;
+background:linear-gradient(180deg,#5c2d87,#2e2c8a);
+border-radius:12px;
+overflow-x:auto;
+}
+
+.cell{
+width:40px;
+height:40px;
+border-radius:8px;
+background:#eee;
+}
+
+.banker{background:#ff2e2e;}
+.player{background:#2e6cff;}
+.tie{background:#17c200;}
+
+/* BUTTONS */
+
+.controls{
+display:flex;
+gap:10px;
+justify-content:center;
+margin-top:15px;
+}
+
+button{
+border:none;
+padding:12px 18px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btnB{background:#ff2e2e;color:white;}
+.btnP{background:#2e6cff;color:white;}
+.btnT{background:#00b300;color:white;}
+.btnUndo{background:#ff9800;color:white;}
+.btnClear{background:#444;color:white;}
+
+.row{
+display:flex;
+gap:20px;
+}
+
+.panel{
+flex:1;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:10px;
+text-align:center;
+}
+
+th{
+border-bottom:2px solid #ff3bd4;
+}
+
+/* STATS */
+
+.statbox{
+display:flex;
+justify-content:space-around;
+margin-bottom:20px;
+}
+
+.circle{
+width:50px;
+height:50px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.b{background:red;}
+.p{background:blue;}
+.t{background:green;}
+
+.bar{
+height:12px;
+background:#ccc;
+border-radius:10px;
+overflow:hidden;
+margin-bottom:10px;
+}
+
+.fill{
+height:100%;
+}
+
+.fill.b{background:red;}
+.fill.p{background:#2e6cff;}
+.fill.t{background:green;}
+
+#lineA,#lineB,#lineC{
+padding:8px;
+font-size:18px;
+margin:4px 0;
+}
+
+.signalP{color:#0066ff}
+.signalB{color:#ff0000}
+.wait{color:#aaa}
+
+.historyRow{
+display:flex;
+align-items:center;
+margin:6px 0;
+gap:10px;
+}
+
+.history{
+display:flex;
+gap:4px;
+overflow-x:auto;
+white-space:nowrap;
+max-width:900px;
+}
+
+.histBox{
+width:18px;
+height:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:12px;
+border-radius:4px;
+background:#333;
+}
+ 
+.win{
+background:#00c853;
+}
+
+.lose{
+background:#ff1744;
+}
+
+.blinkHigh{
+animation:blinkHigh 0.8s infinite alternate;
+font-weight:bold;
+color:#00ff9c;
+}
+
+@keyframes blinkHigh{
+0%{opacity:1}
+100%{opacity:0.3}
+}
+
+.loginPage{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:linear-gradient(180deg,#2b0140,#160020);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+.loginBox{
+background:linear-gradient(180deg,#4b1b68,#2a0d3d);
+padding:40px;
+border-radius:15px;
+width:320px;
+text-align:center;
+box-shadow:0 0 25px rgba(255,0,200,.3);
+}
+
+.loginBox h2{
+margin-bottom:20px;
+}
+
+.loginBox input{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:none;
+border-radius:6px;
+}
+
+.loginBtn{
+width:100%;
+padding:10px;
+background:#ff2e9f;
+color:white;
+font-weight:bold;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.eye{
+position:absolute;
+right:10px;
+top:50%;
+transform:translateY(-50%);
+cursor:pointer;
+}
+
+.passWrap{
+position:relative;
+}
+
+.expire{
+margin-top:10px;
+font-size:14px;
+color:#ffb3ff;
+}
+
+#lineA,#lineB,#lineC,#lineD,#lineE,#lineF{
+padding:8px;
+font-size:18px;
+margin:4px 0;
+}
+
+#lineL1,#lineL2,#lineL3,#lineL4,#lineL5,
+#lineL6,#lineL7,#lineL8,#lineL9,#lineL10,
+#lineL11,#lineL12,#lineL13,#lineL14,#lineL15{
+ padding:8px;
+ font-size:16px;
+ margin:3px 0;
+}
+
+#aiBox{
+text-align:center;
+padding:20px;
+}
+
+#finalBet{
+font-size:30px;
+font-weight:bold;
+}
+
+#confidence{
+font-size:18px;
+margin-top:6px;
+opacity:0.9;
+}
+
+/* CONFIDENCE GRID */
+.confGrid{
+  display:grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap:6px;
+  margin-top:10px;
+}
+
+.confItem{
+  padding:6px;
+  border-radius:6px;
+  font-size:12px;
+  text-align:center;
+  background:#222;
+}
+
+.confWin{
+  background:#00c853;
+}
+
+.confLose{
+  background:#ff1744;
+}
+
+/* ===== 📊 QUICK VIEW LEFT TOP ===== */
+.quickBox{
+  position:fixed;
+  top:90px;   /* 👈 เลื่อนลงมาใต้ header */
+  left:20px;  /* 👈 ขยับให้บาลานซ์ */
+  width:220px;
+  z-index:999;
+
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(10px);
+
+  border-radius:12px;
+  padding:10px;
+
+  border:1px solid rgba(255,255,255,0.1);
+
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.8),
+    0 0 15px rgba(255,0,200,0.2);
+}
+
+@media (max-width: 768px){
+  .quickBox{
+    top:110px;
+    left:10px;
+    width:180px;
+  }
+}
+
+/* title */
+.quickTitle{
+  font-size:12px;
+  color:#aaa;
+  margin-bottom:6px;
+}
+
+/* row */
+.quickRow{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  margin:4px 0;
+}
+
+/* สี */
+.qP{color:#2e6cff;}
+.qB{color:#ff2e2e;}
+.qWait{color:#aaa;}
+
+/* 🔥 กระพริบ */
+.qHot{
+  animation:blinkQ 0.7s infinite alternate;
+  font-weight:bold;
+}
+
+@keyframes blinkQ{
+  0%{opacity:1}
+  100%{opacity:0.3}
+}
+
+.quickBox{
+  position:fixed;
+  top:120px;      /* 🔥 ต่ำลงชัด ไม่ชน title */
+  left:20px;
+  width:230px;
+
+  z-index:999;
+
+  background:rgba(0,0,0,0.78);
+  backdrop-filter:blur(12px);
+
+  border-radius:14px;
+  padding:12px;
+
+  border:1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,0.9),
+    0 0 18px rgba(255,0,200,0.25);
+}
+
+/* 🔥 แยก section */
+.quickSection{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
+
+/* TOP AI */
+.topAI{
+  font-size:13px;
+  margin-top:6px;
+}
+
+.topAI span{
+  font-weight:bold;
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="loginPage" id="loginPage">
+
+  <div class="loginBox" id="loginBox">
+    <h2>Baccarat Login</h2>
+
+    <input id="user" placeholder="Username">
+
+    <div class="passWrap">
+      <input id="pass" type="password" placeholder="Password">
+
+      <div style="margin-top:8px;text-align:left;font-size:14px;">
+        <label>
+          <input type="checkbox" id="showPass" onclick="togglePassCheck()">
+          แสดงรหัสผ่าน
+        </label>
+      </div>
+    </div>
+
+    <button class="loginBtn" onclick="login()">LOGIN</button>
+    <div id="loginErr" style="margin-top:10px;color:#ff4d4d;"></div>
+  </div>
+
+</div>
+
+
+<div class="container" id="app">
+
+<!-- ✅ QUICK VIEW ต้องอยู่ในนี้ -->
+<div class="quickBox">
+
+  <div class="quickTitle">⚡ QUICK VIEW</div>
+
+  <div class="quickRow">
+    <span>BET</span>
+    <span id="qBet">-</span>
+  </div>
+
+  <div class="quickRow">
+    <span>CONF</span>
+    <span id="qConf">0%</span>
+  </div>
+
+  <div class="quickSection">
+
+    <div class="quickTitle">🔥 TOP AI</div>
+
+    <div class="topAI" id="topAI1">-</div>
+    <div class="topAI" id="topAI2">-</div>
+    <div class="topAI" id="topAI3">-</div>
+
+  </div>
+
+  <div class="quickSection">
+
+    <div class="quickRow">
+      <span>P Count</span>
+      <span id="qPcount">0</span>
+    </div>
+
+    <div class="quickRow">
+      <span>B Count</span>
+      <span id="qBcount">0</span>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ROADMAP -->
+
+<div class="card">
+<div class="header">
+
+<div class="title">
+Baccarat Dna Kill + ผล Confidence
+<div id="expireText" style="font-size:14px;">
+วันหมดอายุ : 15 พฤษภาคม พ.ศ. 2569
+</div>
+</div>
+
+<div>
+ผลล่าสุด: <span id="lastResult">-</span>
+</div>
+
+</div>
+
+<div class="roadmap" id="roadmap"></div>
+
+<div class="controls">
+
+<button class="btnP" onclick="addResult('P')">PLAYER</button>
+<button class="btnB" onclick="addResult('B')">BANKER</button>
+<button class="btnT" onclick="addResult('T')">TIE</button>
+
+<button class="btnUndo" onclick="undo()">UNDO</button>
+<button class="btnClear" onclick="clearBoard()">CLEAR</button>
+
+</div>
+
+</div>
+
+<!-- STATS -->
+
+<div class="row">
+
+<div class="card panel">
+
+<h2>สถิติ</h2>
+
+<div class="statbox">
+
+<div class="circle b">B <span id="countB">0</span></div>
+<div class="circle p">P <span id="countP">0</span></div>
+<div class="circle t">T <span id="countT">0</span></div>
+
+</div>
+
+<!-- AI HISTORY -->
+
+<div class="historyRow">
+<div id="labelA"></div>
+<div id="histA" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelB"></div>
+<div id="histB" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelC"></div>
+<div id="histC" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelD"></div>
+<div id="histD" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelE"></div>
+<div id="histE" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelF"></div>
+<div id="histF" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelL1"></div>
+<div id="histL1" class="history"></div>
+</div>
+
+<div class="historyRow">
+<div id="labelL2"></div>
+<div id="histL2" class="history"></div>
+</div>
+
+<div class="historyRow"><div id="labelL3"></div><div id="histL3" class="history"></div></div>
+<div class="historyRow"><div id="labelL4"></div><div id="histL4" class="history"></div></div>
+<div class="historyRow"><div id="labelL5"></div><div id="histL5" class="history"></div></div>
+<div class="historyRow"><div id="labelL6"></div><div id="histL6" class="history"></div></div>
+<div class="historyRow"><div id="labelL7"></div><div id="histL7" class="history"></div></div>
+<div class="historyRow"><div id="labelL8"></div><div id="histL8" class="history"></div></div>
+<div class="historyRow"><div id="labelL9"></div><div id="histL9" class="history"></div></div>
+<div class="historyRow"><div id="labelL10"></div><div id="histL10" class="history"></div></div>
+<div class="historyRow"><div id="labelL11"></div><div id="histL11" class="history"></div></div>
+<div class="historyRow"><div id="labelL12"></div><div id="histL12" class="history"></div></div>
+<div class="historyRow"><div id="labelL13"></div><div id="histL13" class="history"></div></div>
+<div class="historyRow"><div id="labelL14"></div><div id="histL14" class="history"></div></div>
+<div class="historyRow"><div id="labelL15"></div><div id="histL15" class="history"></div></div>
+
+</div> <!-- ปิด card panel -->
+
+
+<div id="aiBox">
+
+<div id="finalBet" style="font-size:22px;font-weight:bold;">
+🔥 แทง: -
+</div>
+
+<div id="confidence">
+Confidence 0%
+</div>
+
+<div id="confGrid" class="confGrid"></div>
+
+</div>
+
+</div> <!-- ปิด card AI -->
+
+</div> <!-- ปิด row -->
+
+<script>
+
+const roadmap = document.getElementById("roadmap")
+
+const cols = 14
+const rows = 6
+
+const cells = []
+const results = []
+const aiStats = {
+
+A:{win:0,lose:0,total:0,last:null},
+B:{win:0,lose:0,total:0,last:null},
+C:{win:0,lose:0,total:0,last:null},
+D:{win:0,lose:0,total:0,last:null},
+E:{win:0,lose:0,total:0,last:null},
+F:{win:0,lose:0,total:0,last:null},
+
+L1:{win:0,lose:0,total:0,last:null},
+L2:{win:0,lose:0,total:0,last:null},
+L3:{win:0,lose:0,total:0,last:null},
+L4:{win:0,lose:0,total:0,last:null},
+L5:{win:0,lose:0,total:0,last:null},
+L6:{win:0,lose:0,total:0,last:null},
+L7:{win:0,lose:0,total:0,last:null},
+L8:{win:0,lose:0,total:0,last:null},
+L9:{win:0,lose:0,total:0,last:null},
+L10:{win:0,lose:0,total:0,last:null},
+L11:{win:0,lose:0,total:0,last:null},
+L12:{win:0,lose:0,total:0,last:null},
+L13:{win:0,lose:0,total:0,last:null},
+L14:{win:0,lose:0,total:0,last:null},
+L15:{win:0,lose:0,total:0,last:null}
+
+}
+
+const confHistory = []
+
+const aiHistory = {
+A:[],B:[],C:[],D:[],E:[],F:[],
+L1:[],L2:[],L3:[],L4:[],L5:[],
+L6:[],L7:[],L8:[],L9:[],L10:[],
+L11:[],L12:[],L13:[],L14:[],L15:[]
+}
+
+let currentRow = 0
+let currentCol = 0
+let isReplay = false; // ✅ วางตรงนี้
+
+
+
+
+/* สร้าง grid */
+
+for(let r=0;r<rows;r++){
+
+ for(let c=0;c<cols;c++){
+
+  const cell = document.createElement("div")
+  cell.className="cell"
+
+  roadmap.appendChild(cell)
+
+  cells.push(cell)
+
+ }
+
+}
+
+/* เพิ่มผล */
+function addResult(type){
+
+if(results.length >= cols*rows) return
+
+results.push(type)
+
+// ✅ ต้องเช็คผลก่อน (ใช้ค่าทำนายรอบก่อน)
+checkAIPredict(type)
+
+// ✅ แล้วค่อยวิเคราะห์รอบใหม่
+analyzeAI()
+
+drawBead()
+updateStats()
+renderHistory()
+
+document.getElementById("lastResult").textContent = type
+
+}
+
+
+
+/* =========================
+PROGRAM EXPIRE SYSTEM
+========================= */
+
+const EXPIRE_DATE = new Date("2026-05-15T23:59:59")
+
+function checkExpire(){
+
+const now = new Date()
+
+if(now > EXPIRE_DATE){
+
+document.body.innerHTML = `
+<div style="
+display:flex;
+align-items:center;
+justify-content:center;
+height:100vh;
+background:#160020;
+color:white;
+font-family:Segoe UI;
+flex-direction:column;
+">
+
+<h1 style="color:#ff2e9f">PROGRAM EXPIRED</h1>
+
+<p>โปรแกรมหมดอายุแล้ว</p>
+
+<p>กรุณาติดต่อผู้พัฒนา</p>
+
+</div>
+`
+
+}
+
+}
+
+checkExpire()
+
+/* วาด Bead Road */
+
+function drawBead(){
+
+ cells.forEach(c=>c.className="cell");
+
+ currentRow=0;
+ currentCol=0;
+
+ results.forEach(r=>{
+
+  const index=currentRow*cols+currentCol;
+
+  if(!cells[index]) return;
+
+  if(r==="B") cells[index].classList.add("banker");
+  if(r==="P") cells[index].classList.add("player");
+  if(r==="T") cells[index].classList.add("tie");
+
+  currentRow++;
+
+  if(currentRow>=rows){
+   currentRow=0;
+   currentCol++;
+  }
+
+ });
+
+ roadmap.scrollLeft=roadmap.scrollWidth;
+
+}
+/* เพิ่มฟังก์ชันนี้ */
+
+function updateStats(){
+
+let B = results.filter(r=>r==="B").length
+let P = results.filter(r=>r==="P").length
+let T = results.filter(r=>r==="T").length
+
+document.getElementById("countB").textContent = B
+document.getElementById("countP").textContent = P
+document.getElementById("countT").textContent = T
+
+}
+
+
+/* CLEAR */
+function clearBoard(){
+
+ results.length = 0;
+
+ currentRow = 0;
+ currentCol = 0;
+
+ // reset AI
+[
+"A","B","C","D","E","F",
+"L1","L2","L3","L4","L5","L6","L7","L8","L9","L10",
+"L11","L12","L13","L14","L15"
+].forEach(line=>{
+ aiStats[line]={win:0,lose:0,total:0,last:null};
+ aiHistory[line]=[];
+});
+
+ // reset grid
+ cells.forEach(c=>{
+  c.className="cell";
+ });
+
+ updateStats();
+ renderHistory();
+ confHistory.length = 0
+ renderConfidenceGrid()
+
+ document.getElementById("lastResult").textContent="-";
+ renderAI(null,null,null,null,null,null,"-",0)
+
+  // ✅ เพิ่มตรงนี้
+ resetQuickView()
+
+}
+
+
+
+function checkAIPredict(result){
+
+if(result==="T") return
+
+["A","B","C","D","E","F",
+"L1","L2","L3","L4","L5","L6","L7","L8","L9","L10",
+"L11","L12","L13","L14","L15"].forEach(line=>{
+
+let pred = aiStats[line].last
+if(!pred) return
+
+aiStats[line].total++
+
+let win = pred==result
+
+if(win){
+  aiStats[line].win++
+  aiHistory[line].push(1)
+}else{
+  aiStats[line].lose++
+  aiHistory[line].push(0)
+}
+
+})
+
+/***** FINAL BET TRACK *****/
+let finalBet = getFinalBet()
+
+if(finalBet && result !== "T"){
+  let win = finalBet === result ? 1 : 0
+  confHistory.push(win)
+
+  if(confHistory.length > 200){
+    confHistory.shift()
+  }
+}
+
+renderHistory()
+renderConfidenceGrid()
+
+}
+
+function replayAll(){
+
+isReplay = true
+
+// reset
+Object.keys(aiStats).forEach(k=>{
+  aiStats[k]={win:0,lose:0,total:0,last:null}
+  aiHistory[k]=[]
+})
+
+let temp = [...results]
+results.length = 0
+
+temp.forEach(r=>{
+
+  // ✅ วิเคราะห์ก่อน (เหมือนตอนเล่นจริง)
+  analyzeAI()
+
+  let preds = {}
+  Object.keys(aiStats).forEach(line=>{
+    preds[line] = aiStats[line].last
+  })
+
+  results.push(r)
+
+  // ✅ เช็คผล
+  if(r !== "T"){
+    Object.keys(preds).forEach(line=>{
+      let pred = preds[line]
+      if(!pred) return
+
+      aiStats[line].total++
+
+      if(pred === r){
+        aiStats[line].win++
+        aiHistory[line].push(1)
+      }else{
+        aiStats[line].lose++
+        aiHistory[line].push(0)
+      }
+    })
+  }
+
+})
+
+isReplay = false
+
+drawBead()
+updateStats()
+renderHistory()
+}
+
+undo = function(){
+
+console.log("🔥 FIXED UNDO")
+
+if(results.length===0) return
+
+let removed = results.pop()
+console.log("ลบ:", removed)
+
+/* replay ใหม่แบบถูกต้อง */
+replayAll()
+
+drawBead()
+updateStats()
+renderHistory()
+
+// ✅ เพิ่มตรงนี้
+if(results.length === 0){
+  resetQuickView()
+}else{
+  analyzeAI() // ให้มันคำนวณ Quick View ใหม่
+}
+
+}
+
+console.log("A history:", aiHistory.A.length)
+
+
+
+
+/* =========================
+RENDER HISTORY
+========================= */
+
+function renderHistory(){
+
+[
+"A","B","C","D","E","F",
+"L1","L2","L3","L4","L5","L6","L7","L8","L9","L10",
+"L11","L12","L13","L14","L15"
+].forEach(line=>{
+
+let el = document.getElementById("hist"+line)
+let label = document.getElementById("label"+line)
+
+// ✅ กัน element ไม่มี (สำคัญมาก)
+if(!el || !label) return
+
+let stat = aiStats[line]
+
+// ✅ กัน undefined (เผื่อ edge case)
+if(!stat) return
+
+let acc = stat.total
+ ? Math.round(stat.win / stat.total * 100)
+ : 0
+
+/* เปลี่ยนสี PLAYER / BANKER */
+
+let bet = stat.last=="B"
+ ? "<span class='signalB'>BANKER</span>"
+ : stat.last=="P"
+ ? "<span class='signalP'>PLAYER</span>"
+ : "-"
+
+/* blink เมื่อแม่น */
+
+let cls = acc >= 60 ? "blinkHigh" : ""
+
+/* แสดง label */
+
+label.innerHTML =
+line+" → "+bet+" <span class='"+cls+"'>"+acc+"%</span>"
+
+el.innerHTML=""
+
+/* วาด history */
+
+aiHistory[line].forEach(v=>{
+
+let box = document.createElement("div")
+
+box.className = "histBox " + (v ? "win" : "lose")
+box.textContent = v ? "✔" : "✖"
+
+el.appendChild(box)
+
+})
+
+/* scroll ไปขวาสุด */
+
+el.scrollLeft = el.scrollWidth
+
+})
+
+}
+
+function renderConfidenceGrid(){
+
+let grid = document.getElementById("confGrid")
+if(!grid) return
+
+grid.innerHTML = ""
+
+/* เอา 39 ล่าสุด (3 แถว) */
+let show = confHistory.slice(-39)
+
+show.forEach(v=>{
+
+  let box = document.createElement("div")
+  box.className = "confItem " + (v ? "confWin" : "confLose")
+  box.textContent = v ? "✔" : "✖"
+
+  grid.appendChild(box)
+
+})
+
+}
+
+
+/* =========================
+AI DISPLAY
+========================= */
+
+function renderAI(
+ lineA,lineB,lineC,lineD,lineE,lineF,
+ bet,confidence,
+ L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15
+){
+
+function txt(v){
+ if(v=="B") return "<span class='signalB'>BANKER</span>"
+ if(v=="P") return "<span class='signalP'>PLAYER</span>"
+ return "-"
+}
+
+/* set line safely */
+function setSafe(id, val){
+ let el = document.getElementById(id)
+ if(!el) return
+ el.innerHTML = id.replace("line","") + " → " + txt(val)
+}
+
+/* A–F */
+setSafe("lineA",lineA)
+setSafe("lineB",lineB)
+setSafe("lineC",lineC)
+setSafe("lineD",lineD)
+setSafe("lineE",lineE)
+setSafe("lineF",lineF)
+
+/* L1–L15 */
+setSafe("lineL1",L1)
+setSafe("lineL2",L2)
+setSafe("lineL3",L3)
+setSafe("lineL4",L4)
+setSafe("lineL5",L5)
+setSafe("lineL6",L6)
+setSafe("lineL7",L7)
+setSafe("lineL8",L8)
+setSafe("lineL9",L9)
+setSafe("lineL10",L10)
+setSafe("lineL11",L11)
+setSafe("lineL12",L12)
+setSafe("lineL13",L13)
+setSafe("lineL14",L14)
+setSafe("lineL15",L15)
+
+/* FINAL BET */
+let glow = confidence >= 60 ? "blinkHigh" : ""
+
+let finalEl = document.getElementById("finalBet")
+if(finalEl){
+ finalEl.innerHTML =
+ "<span class='"+glow+"'>🔥 แทง: "+txt(bet)+"</span>"
+}
+
+/* ✅ CONFIDENCE (จุดสำคัญที่คุณถาม) */
+let confEl = document.getElementById("confidence")
+
+if(confEl){
+  confEl.innerHTML = "Confidence " + confidence + "%"
+}
+
+}
+
+
+
+/* =========================
+QUICK VIEW ENGINE (วางตรงนี้)
+========================= */
+function updateQuickView(bet, confidence, pool15){
+
+let pCount = pool15.filter(x=>x=="P").length
+let bCount = pool15.filter(x=>x=="B").length
+
+// BET
+let qBet = document.getElementById("qBet")
+if(qBet){
+  qBet.innerText = bet=="P" ? "PLAYER" : "BANKER"
+  qBet.className = bet=="P" ? "qP" : "qB"
+}
+
+// CONF
+let qConf = document.getElementById("qConf")
+if(qConf){
+  qConf.innerText = confidence + "%"
+  qConf.className = ""
+  if(confidence >= 60){
+    qConf.classList.add("qHot")
+  }
+}
+
+// COUNT
+document.getElementById("qPcount").innerText = pCount
+document.getElementById("qBcount").innerText = bCount
+
+/* TOP AI */
+let ranking = []
+
+Object.keys(aiStats).forEach(line=>{
+  let s = aiStats[line]
+  if(s.total < 3) return
+
+  ranking.push({
+    name: line,
+    acc: s.win / s.total,
+    last: s.last
+  })
+})
+
+ranking.sort((a,b)=>b.acc - a.acc)
+
+function renderTop(id, data){
+  let el = document.getElementById(id)
+  if(!el) return
+
+  if(!data){
+    el.innerHTML = "-"
+    return
+  }
+
+  let color = data.last=="P" ? "qP" : "qB"
+
+  el.innerHTML =
+    data.name +
+    " → <span class='"+color+"'>" +
+    data.last +
+    "</span> (" +
+    Math.round(data.acc*100) + "%)"
+}
+
+renderTop("topAI1", ranking[0])
+renderTop("topAI2", ranking[1])
+renderTop("topAI3", ranking[2])
+
+}
+
+
+ 
+// ✅ วางตรงนี้ (ต่อจาก updateQuickView)
+function resetQuickView(){
+
+  // BET
+  let qBet = document.getElementById("qBet")
+  if(qBet){
+    qBet.innerText = "-"
+    qBet.className = "qWait"
+  }
+
+  // CONF
+  let qConf = document.getElementById("qConf")
+  if(qConf){
+    qConf.innerText = "0%"
+    qConf.className = ""
+  }
+
+  // COUNT
+  document.getElementById("qPcount").innerText = 0
+  document.getElementById("qBcount").innerText = 0
+
+  // TOP AI
+  ["topAI1","topAI2","topAI3"].forEach(id=>{
+    let el = document.getElementById(id)
+    if(el) el.innerHTML = "-"
+  })
+
+}
+
+
+function analyzeAI(){
+
+  if(results.length < 3){
+    if(!isReplay){
+      renderAI(null,null,null,null,null,null,"-",0)
+    }
+    return
+  }
+
+  /* กรอง T */
+  let clean = results.filter(x=>x!=="T")
+  let last = clean.slice(-3)
+
+  if(last.length < 3) return
+
+  let B = last.filter(x=>x=="B").length
+  let P = last.filter(x=>x=="P").length
+
+  let trend = B>P ? "B" : "P"
+
+  /* chop */
+  let chop=0
+  for(let i=1;i<last.length;i++){
+    if(last[i]!=last[i-1]) chop++
+  }
+  let chopRate = chop/(last.length-1)
+
+  /* run */
+  let run=1, maxRun=1
+  for(let i=1;i<last.length;i++){
+    if(last[i]==last[i-1]) run++
+    else run=1
+    if(run>maxRun) maxRun=run
+  }
+
+  /* ===== MAIN ===== */
+  let lineA = trend
+  let lineB = chopRate>0.6 ? trend : (trend=="B"?"P":"B")
+  let lineC = B>P ? "P":"B"
+  let lineD = maxRun>=3 ? (trend=="B"?"P":"B") : trend
+
+  let prev = clean.slice(-4)
+  let lineE = trend
+  if(prev.length>=4){
+    if(prev[0]==prev[2] && prev[1]==prev[3]){
+      lineE = prev[0]
+    }
+  }
+
+  let weightB = B*1.2
+  let weightP = P*1.2
+  if(maxRun>=2){
+    if(trend=="B") weightB+=1
+    else weightP+=1
+  }
+  let lineF = weightB>weightP ? "B":"P"
+
+  /* ===== L1–L15 ===== */
+  let L1 = (last[1]==last[2]) ? (last[2]=="B"?"P":"B") : trend
+  let L2 = maxRun>=2 ? (trend=="B"?"P":"B") : trend
+  let hist = clean
+  let L3 = hist.length>=4 ? hist[hist.length-4] : trend
+  let L4 = chopRate>0.5 ? (last[2]=="B"?"P":"B") : last[2]
+  let L5 = (last[0]==last[2]) ? (last[2]=="B"?"P":"B") : trend
+  let L6 = last[2]
+  let L7 = last[2]=="B"?"P":"B"
+  let L8 = last[2]
+
+  let long = clean.slice(-10)
+  let cB = long.filter(x=>x=="B").length
+  let cP = long.filter(x=>x=="P").length
+  let L9 = cB>cP?"B":"P"
+
+  let L10 = chopRate>0.7 ? last[0] : trend
+  let L11 = chopRate<0.3 ? trend : (trend=="B"?"P":"B")
+  let L12 = (B==P) ? (last[2]=="B"?"P":"B") : trend
+
+  let diff = Math.abs(B-P)
+  let L13 = diff>=2 ? trend : (trend=="B"?"P":"B")
+
+  let L14 = maxRun>=3 ? (trend=="B"?"P":"B") : trend
+
+  let pool = [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14]
+  let cBB = pool.filter(x=>x=="B").length
+  let cPP = pool.filter(x=>x=="P").length
+  let L15 = cBB>cPP?"B":"P"
+
+  /* ===== CONF ===== */
+  let lines=[lineA,lineB,lineC,lineD,lineE,lineF,
+             L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15]
+
+  let scoreB = lines.filter(x=>x=="B").length
+  let scoreP = lines.filter(x=>x=="P").length
+
+  let bet = scoreB>scoreP?"B":"P"
+  let confidence = Math.round(Math.max(scoreB,scoreP)/lines.length*100)
+
+  /* SAVE */
+  aiStats.A.last=lineA
+  aiStats.B.last=lineB
+  aiStats.C.last=lineC
+  aiStats.D.last=lineD
+  aiStats.E.last=lineE
+  aiStats.F.last=lineF
+
+  aiStats.L1.last=L1
+  aiStats.L2.last=L2
+  aiStats.L3.last=L3
+  aiStats.L4.last=L4
+  aiStats.L5.last=L5
+  aiStats.L6.last=L6
+  aiStats.L7.last=L7
+  aiStats.L8.last=L8
+  aiStats.L9.last=L9
+  aiStats.L10.last=L10
+  aiStats.L11.last=L11
+  aiStats.L12.last=L12
+  aiStats.L13.last=L13
+  aiStats.L14.last=L14
+  aiStats.L15.last=L15
+
+  /* ===== RENDER ===== */
+  if(!isReplay){
+
+    renderAI(
+      lineA,lineB,lineC,lineD,lineE,lineF,
+      bet,confidence,
+      L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15
+    )
+
+    // ✅ QUICK VIEW (สำคัญ)
+    let pool15 = [L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15]
+    updateQuickView(bet, confidence, pool15)
+
+    drawBead()
+    updateStats()
+    renderHistory()
+  }
+}
+
+/* =========================
+LOGIN SYSTEM
+========================= */
+
+async function login(){
+
+  const userInput = document.getElementById("user");
+  const passInput = document.getElementById("pass");
+
+  const appEl = document.getElementById("app");
+  const loginErrEl = document.getElementById("loginErr");
+
+  loginErrEl.textContent = "กำลังตรวจสอบ...";
+
+  try {
+
+    const res = await fetch(
+      "https://morning-block-55bb.havanalanna.workers.dev/?user="
+      + encodeURIComponent(userInput.value)
+      + "&pass=" + encodeURIComponent(passInput.value)
+    );
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+
+      document.getElementById("loginPage").style.display = "none";
+      appEl.style.display = "block"; // ✅ สำคัญ (ของเดิมยังไม่โชว์)
+
+      updateStats();
+      renderHistory();
+      drawBead();
+      resetQuickView();
+
+      if (results.length > 0) {
+        analyzeAI();
+      }
+
+      /* 🔒 ตรวจ License ทุก 30 วิ */
+      const user = userInput.value;
+      const pass = passInput.value;
+
+      setInterval(async () => {
+
+        try {
+          const r = await fetch(
+            "https://morning-block-55bb.havanalanna.workers.dev/?user="
+            + encodeURIComponent(user)
+            + "&pass=" + encodeURIComponent(pass)
+          );
+
+          const j = await r.json();
+
+          if (j.status !== "ok") {
+            alert("⛔ License ถูกปิดใช้งาน");
+            location.reload();
+          }
+
+        } catch (e) {
+          console.log("License check error");
+        }
+
+      }, 30000);
+
+    } else {
+      loginErrEl.textContent = "User หรือ Password ไม่ถูกต้อง";
+    }
+
+  } catch (e) {
+    loginErrEl.textContent = "ไม่สามารถเชื่อมต่อ License Server";
+  }
+}
+
+
+function getFinalBet(){
+
+let scoreB=0, scoreP=0
+
+Object.keys(aiStats).forEach(line=>{
+  let v = aiStats[line].last
+  if(v==="B") scoreB++
+  if(v==="P") scoreP++
+})
+
+if(scoreB===0 && scoreP===0) return null
+
+return scoreB>scoreP ? "B" : "P"
+}
+
+
+/* =========================
+SHOW / HIDE PASSWORD
+========================= */
+
+function togglePass(){
+
+const pass = document.getElementById("pass")
+
+if(pass.type === "password"){
+pass.type = "text"
+}else{
+pass.type = "password"
+}
+
+}
+
+/* =========================
+ENTER KEY LOGIN
+========================= */
+
+document.getElementById("pass").addEventListener("keypress", function(e){
+
+if(e.key === "Enter"){
+login()
+}
+
+})
+
+</script>
+
+
+
+<script>
+
+function togglePassCheck(){
+
+  const pass = document.getElementById("pass")
+  const check = document.getElementById("showPass")
+
+  if(!pass || !check) return
+
+  pass.type = check.checked ? "text" : "password"
+
+}
+
+</script>
+</body>
+</html>
